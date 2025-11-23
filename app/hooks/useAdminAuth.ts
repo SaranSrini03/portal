@@ -20,7 +20,7 @@ export const useAdminAuth = (required = true) => {
 
   const login = (username: string, password: string) => {
     // In a real app, verify credentials with your backend
-    if (username === 'admin' && password === 'admin123') {
+    if (username === 'admin' && password === 'admin031') {
       const authData = { isAuthenticated: true, username };
       localStorage.setItem('adminAuth', JSON.stringify(authData));
       // Update state and redirect immediately
