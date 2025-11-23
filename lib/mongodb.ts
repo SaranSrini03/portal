@@ -1,10 +1,10 @@
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.MONGODB_URI || 'mongodb+srv://saransrini003:itsmesaran@cluster0.kh0spv2.mongodb.net/?appName=Cluster0';
+const uri = process.env.MONGODB_URI;
 const dbName = 'resultportal';
 
 if (!uri) {
-  throw new Error('Please add your Mongo URI to .env.local');
+  throw new Error('Please add MONGODB_URI to your .env.local file');
 }
 
 let client: MongoClient;
