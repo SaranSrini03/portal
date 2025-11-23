@@ -12,9 +12,9 @@ export const useAdminAuth = (required = true) => {
     setIsAuthenticated(isAuth);
     
     if (required && !isAuth) {
-      router.push('/admin');
+      router.push('/room-031');
     } else if (!required && isAuth) {
-      router.push('/admin/homepage');
+      router.push('/room-031/homepage');
     }
   }, [required, router]);
 
@@ -25,7 +25,7 @@ export const useAdminAuth = (required = true) => {
       localStorage.setItem('adminAuth', JSON.stringify(authData));
       // Update state and redirect immediately
       setIsAuthenticated(true);
-      router.push('/admin/homepage');
+      router.push('/room-031/homepage');
       return true;
     }
     return false;
@@ -33,7 +33,7 @@ export const useAdminAuth = (required = true) => {
 
   const logout = () => {
     localStorage.removeItem('adminAuth');
-    router.push('/admin');
+    router.push('/room-031');
   };
 
   return { isAuthenticated, login, logout };

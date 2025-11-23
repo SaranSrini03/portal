@@ -10,7 +10,7 @@ import {
   deleteStudent, 
   searchStudents,
   StudentResult 
-} from '../../utils/studentStorage';
+} from '../../utils/studentApi';
 
 export default function AdminHomepage() {
   const { isAuthenticated, logout } = useAdminAuth();
@@ -18,6 +18,9 @@ export default function AdminHomepage() {
   const [students, setStudents] = useState<StudentResult[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingStudent, setEditingStudent] = useState<StudentResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   
   // Form state
   const [rollNumber, setRollNumber] = useState('');
@@ -29,11 +32,22 @@ export default function AdminHomepage() {
     }
   }, [activeSection]);
 
-  const loadStudents = () => {
-    if (searchQuery) {
-      setStudents(searchStudents(searchQuery));
-    } else {
-      setStudents(getStudents());
+  const loadStudents = async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      let data: StudentResult[];
+      if (searchQuery) {
+        data = await searchStudents(searchQuery);
+      } else {
+        data = await getStudents();
+      }
+      setStudents(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load students');
+      setStudents([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -43,27 +57,50 @@ export default function AdminHomepage() {
     }
   }, [searchQuery]);
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rollNumber.trim() || !result.trim()) return;
     
-    addStudent(rollNumber, result);
-    setRollNumber('');
-    setResult('');
-    if (activeSection === 'view') {
-      loadStudents();
+    setIsLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      await addStudent(rollNumber, result);
+      setRollNumber('');
+      setResult('');
+      setSuccess('Student added successfully!');
+      if (activeSection === 'view') {
+        await loadStudents();
+      }
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add student');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleUpdate = (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingStudent || !rollNumber.trim() || !result.trim()) return;
     
-    updateStudent(editingStudent.id, rollNumber, result);
-    setEditingStudent(null);
-    setRollNumber('');
-    setResult('');
-    loadStudents();
+    setIsLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      await updateStudent(editingStudent.id, rollNumber, result);
+      setEditingStudent(null);
+      setRollNumber('');
+      setResult('');
+      setSuccess('Student updated successfully!');
+      setActiveSection('view');
+      await loadStudents();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update student');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleEdit = (student: StudentResult) => {
@@ -73,10 +110,21 @@ export default function AdminHomepage() {
     setActiveSection('add');
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this student record?')) {
-      deleteStudent(id);
-      loadStudents();
+      setIsLoading(true);
+      setError('');
+      setSuccess('');
+      try {
+        await deleteStudent(id);
+        setSuccess('Student deleted successfully!');
+        await loadStudents();
+        setTimeout(() => setSuccess(''), 3000);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to delete student');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -147,6 +195,17 @@ export default function AdminHomepage() {
 
         {/* Main Content */}
         <div className="flex-1 bg-white rounded-2xl shadow-xl p-6 overflow-y-auto">
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 text-sm">{error}</p>
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 text-sm">{success}</p>
+            </div>
+          )}
+          
           {activeSection === 'add' ? (
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -187,9 +246,10 @@ export default function AdminHomepage() {
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    disabled={isLoading}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {editingStudent ? 'Update' : 'Add'} Student
+                    {isLoading ? 'Processing...' : editingStudent ? 'Update' : 'Add'} Student
                   </button>
                   {editingStudent && (
                     <button
@@ -220,7 +280,11 @@ export default function AdminHomepage() {
                 </div>
               </div>
 
-              {students.length === 0 ? (
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+                </div>
+              ) : students.length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                   {searchQuery ? 'No students found matching your search.' : 'No students added yet.'}
                 </div>
@@ -245,13 +309,15 @@ export default function AdminHomepage() {
                       <div className="flex gap-2 ml-4">
                         <button
                           onClick={() => handleEdit(student)}
-                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                          disabled={isLoading}
+                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(student.id)}
-                          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
+                          disabled={isLoading}
+                          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Delete
                         </button>

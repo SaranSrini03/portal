@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PageContainer } from '../../components/PageContainer';
-import { getStudentByRollNumber, StudentResult } from '../../utils/studentStorage';
+import { getStudentByRollNumber, StudentResult } from '../../utils/studentApi';
 
 function ResultContent() {
   const router = useRouter();
@@ -13,23 +13,31 @@ function ResultContent() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const rollNumber = searchParams.get('rollNumber');
-    
-    if (!rollNumber) {
-      setError('Roll number is required.');
-      setIsLoading(false);
-      return;
-    }
+    const fetchResult = async () => {
+      const rollNumber = searchParams.get('rollNumber');
+      
+      if (!rollNumber) {
+        setError('Roll number is required.');
+        setIsLoading(false);
+        return;
+      }
 
-    const studentResult = getStudentByRollNumber(rollNumber);
-    
-    if (studentResult) {
-      setResult(studentResult);
-    } else {
-      setError('No result found for this roll number. Please contact the administrator.');
-    }
-    
-    setIsLoading(false);
+      try {
+        const studentResult = await getStudentByRollNumber(rollNumber);
+        
+        if (studentResult) {
+          setResult(studentResult);
+        } else {
+          setError('No result found for this roll number. Please contact the administrator.');
+        }
+      } catch (err) {
+        setError('Failed to fetch result. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchResult();
   }, [searchParams]);
 
   return (
