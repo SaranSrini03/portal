@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageContainer } from '../components/PageContainer';
 import { FormInput } from '../components/FormInput';
+import { MathCaptcha } from '../components/MathCaptcha';
 
 export default function StudentForm() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function StudentForm() {
     phone: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,6 +28,12 @@ export default function StudentForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isCaptchaValid) {
+      alert('Please complete the security verification (captcha) before submitting.');
+      return;
+    }
+    
     setIsLoading(true);
     
     // Navigate to result page with roll number
@@ -96,11 +104,13 @@ export default function StudentForm() {
               />
             </div>
 
+            <MathCaptcha onVerify={setIsCaptchaValid} />
+
             <div className="pt-4">
               <button
                 type="submit"
-                disabled={isLoading}
-                className="w-full px-6 py-4 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading || !isCaptchaValid}
+                className="w-full px-6 py-4 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {isLoading ? 'Loading...' : 'View My Results'}
                 {!isLoading && <span className="ml-2">→</span>}
