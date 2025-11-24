@@ -84,3 +84,17 @@ export async function deleteStudent(id: string): Promise<boolean> {
   return true;
 }
 
+export async function deleteAllStudents(): Promise<number> {
+  const response = await fetch(API_BASE, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete students');
+  }
+
+  const data = await response.json();
+  return data.deletedCount ?? 0;
+}
+

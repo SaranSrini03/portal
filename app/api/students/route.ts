@@ -119,3 +119,23 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function DELETE() {
+  try {
+    const db = await getDb();
+    const collection = db.collection<StudentResult>('students');
+
+    const deleteResult = await collection.deleteMany({});
+
+    return NextResponse.json({
+      success: true,
+      deletedCount: deleteResult.deletedCount,
+    });
+  } catch (error) {
+    console.error('Error deleting all students:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete students' },
+      { status: 500 }
+    );
+  }
+}
+

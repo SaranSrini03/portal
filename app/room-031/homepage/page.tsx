@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAdminAuth } from '../../hooks/useAdminAuth';
 import { PageContainer } from '../../components/PageContainer';
 import { 
@@ -9,6 +9,7 @@ import {
   updateStudent, 
   deleteStudent, 
   searchStudents,
+  deleteAllStudents,
   StudentResult 
 } from '../../utils/studentApi';
 
@@ -21,6 +22,8 @@ export default function AdminHomepage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+  const csvInputRef = useRef<HTMLInputElement>(null);
   
   // Form state
   const [rollNumber, setRollNumber] = useState('');
@@ -75,6 +78,150 @@ export default function AdminHomepage() {
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add student');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const parseCsvContent = (text: string) => {
+    const rows: string[][] = [];
+    let current = '';
+    let inQuotes = false;
+    let row: string[] = [];
+    const sanitized = text.replace(/^\uFEFF/, '');
+
+    for (let i = 0; i < sanitized.length; i++) {
+      const char = sanitized[i];
+
+      if (char === '"') {
+        if (inQuotes && sanitized[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        row.push(current.trim());
+        current = '';
+      } else if ((char === '\n' || char === '\r') && !inQuotes) {
+        if (char === '\r' && sanitized[i + 1] === '\n') {
+          i++;
+        }
+        row.push(current.trim());
+        if (row.some(cell => cell.length > 0)) {
+          rows.push(row);
+        }
+        row = [];
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+
+    if (current || row.length) {
+      row.push(current.trim());
+      if (row.some(cell => cell.length > 0)) {
+        rows.push(row);
+      }
+    }
+
+    return rows;
+  };
+
+  const handleCsvButtonClick = () => {
+    csvInputRef.current?.click();
+  };
+
+  const handleCsvImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError('');
+    setSuccess('');
+    setIsImporting(true);
+
+    try {
+      const text = await file.text();
+      const rows = parseCsvContent(text);
+
+      if (!rows.length) {
+        throw new Error('CSV file is empty.');
+      }
+
+      const headers = rows.shift()?.map(value =>
+        value.toLowerCase().replace(/[^a-z0-9]/g, '')
+      ) || [];
+
+      const usnIndex = headers.findIndex(header =>
+        header === 'usn' || header === 'rollnumber' || header === 'rollno'
+      );
+      const resultIndex = headers.findIndex(header => header === 'result');
+
+      if (usnIndex === -1 || resultIndex === -1) {
+        throw new Error('CSV must include "USN" (or Roll Number) and "Result" columns.');
+      }
+
+      let imported = 0;
+      let skipped = 0;
+
+      for (const row of rows) {
+        const roll = row[usnIndex]?.trim();
+        const resultValue = row[resultIndex]?.trim();
+
+        if (!roll || !resultValue) {
+          skipped++;
+          continue;
+        }
+
+        try {
+          await addStudent(roll, resultValue);
+          imported++;
+        } catch (err) {
+          console.error('CSV import error:', err);
+          skipped++;
+        }
+      }
+
+      if (imported === 0) {
+        throw new Error('No valid rows were imported. Please verify the CSV content.');
+      }
+
+      setSuccess(
+        `Imported ${imported} ${imported === 1 ? 'student' : 'students'}${skipped ? ` (${skipped} skipped)` : ''}.`
+      );
+      if (activeSection === 'view') {
+        await loadStudents();
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to import CSV file.');
+    } finally {
+      setIsImporting(false);
+      if (csvInputRef.current) {
+        csvInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (students.length === 0) {
+      setError('No students to delete.');
+      return;
+    }
+
+    const confirmed = confirm('Are you sure you want to delete all student records? This action cannot be undone.');
+    if (!confirmed) return;
+
+    setIsLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const deletedCount = await deleteAllStudents();
+      setStudents([]);
+      setSuccess(`Deleted ${deletedCount} ${deletedCount === 1 ? 'record' : 'records'}.`);
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete all students.');
     } finally {
       setIsLoading(false);
     }
@@ -237,6 +384,41 @@ export default function AdminHomepage() {
           
           {activeSection === 'add' ? (
             <div>
+              <div className="mb-8 p-5 bg-gradient-to-br from-amber-50 to-white border border-amber-100 rounded-xl shadow-sm">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">Bulk Import</h3>
+                    <p className="text-sm text-gray-600">
+                      Upload a CSV file with columns: Student Name, USN, Result to add multiple records at once.
+                    </p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <button
+                      type="button"
+                      onClick={handleCsvButtonClick}
+                      disabled={isImporting}
+                      className="flex-1 sm:flex-none px-5 py-3 bg-gray-900 text-white rounded-xl hover:bg-black transition-colors text-sm font-semibold disabled:opacity-60"
+                    >
+                      {isImporting ? 'Importing...' : 'Import CSV'}
+                    </button>
+                    <a
+                      href="/sample-students.csv"
+                      download
+                      className="flex-1 sm:flex-none px-5 py-3 border border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors text-center"
+                    >
+                      Download Sample
+                    </a>
+                  </div>
+                </div>
+                <input
+                  ref={csvInputRef}
+                  type="file"
+                  accept=".csv"
+                  className="hidden"
+                  onChange={handleCsvImport}
+                />
+              </div>
+
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
                   {editingStudent ? (
@@ -360,19 +542,29 @@ export default function AdminHomepage() {
                       {students.length} {students.length === 1 ? 'student' : 'students'} registered
                     </p>
                   </div>
-                  <div className="relative w-full sm:w-auto">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <div className="relative flex-1 sm:w-80">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm hover:shadow-md"
+                        placeholder="Search by roll number or result..."
+                      />
                     </div>
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 pr-4 py-3 w-full sm:w-80 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm hover:shadow-md"
-                      placeholder="Search by roll number or result..."
-                    />
+                    <button
+                      type="button"
+                      onClick={handleDeleteAll}
+                      disabled={isLoading || students.length === 0}
+                      className="px-5 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Delete All
+                    </button>
                   </div>
                 </div>
               </div>

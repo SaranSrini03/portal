@@ -1,53 +1,120 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { PageContainer } from "./components/PageContainer";
+import { FormInput } from "./components/FormInput";
+import { MathCaptcha } from "./components/MathCaptcha";
+import { HeaderLogos } from "./components/HeaderLogos";
+
+const Marquee: any = "marquee";
+
+type ExamType = "jee" | "neet";
+
 export default function Home() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    rollNumber: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
+  const [examType, setExamType] = useState<ExamType>("jee");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isCaptchaValid) {
+      alert("Please complete the security verification (captcha) before submitting.");
+      return;
+    }
+
+    setIsLoading(true);
+    router.push(
+      `/dashboard/result?rollNumber=${encodeURIComponent(formData.rollNumber)}&exam=${examType}`
+    );
+  };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-zinc-50 via-blue-50 to-indigo-100 font-sans relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-blue-200 to-transparent rounded-full blur-3xl opacity-60"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-r from-indigo-200 to-transparent rounded-full blur-3xl opacity-60"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-violet-100 to-transparent rounded-full blur-3xl opacity-40"></div>
+    <div className="flex min-h-screen flex-col bg-slate-50 font-sans">
+      <HeaderLogos />
+      <div className="fixed top-24 left-0 w-full bg-amber-100 text-amber-900 shadow-sm z-20">
+        <Marquee className="py-2 text-sm font-semibold tracking-wide" scrollamount={15}>
+          Results are out! Please proceed to the portal to view your scores.
+        </Marquee>
       </div>
 
-      {/* Main content */}
-      <div className="relative z-10 text-center px-6 max-w-2xl mx-auto">
+      <div className="flex-1 w-full pt-40 pb-10">
+        <PageContainer>
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-10">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Student Information</h1>
+                <p className="text-gray-600">Please enter your details to view your results</p>
+              </div>
 
-        {/* Heading */}
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
-          Welcome to <span className="bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">Portal.</span>
-        </h1>
-        
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <p className="text-sm font-semibold text-gray-700 mb-3">Select Examination</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {(["jee", "neet"] as ExamType[]).map((type) => {
+                      const isActive = examType === type;
+                      const label = type === "jee" ? "JEE" : "NEET";
+                      return (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => setExamType(type)}
+                          className={`rounded-xl border px-5 py-3 text-base font-semibold transition-all ${
+                            isActive
+                              ? "bg-gray-900 text-white border-gray-900 shadow-lg shadow-gray-500/40"
+                              : "bg-white text-gray-700 border-gray-200 hover:border-gray-400"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
+                <FormInput
+                  label="Roll Number"
+                  id="rollNumber"
+                  name="rollNumber"
+                  value={formData.rollNumber}
+                  onChange={handleChange}
+                  placeholder="Enter roll number"
+                  required
+                />
 
-        {/* CTA Button */}
-        <div className="group relative">
-          <a
-            href="/dashboard"
-            className="relative px-10 py-4 rounded-2xl bg-gradient-to-r from-gray-900 to-black text-white text-lg font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 inline-flex items-center gap-3 overflow-hidden"
-          >
-            {/* Shine effect */}
-            <span className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
-            
-            Enter Portal
-            <svg 
-              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </a>
-          
-          {/* Button shadow */}
-          <div className="absolute inset-0 bg-gray-900/30 blur-xl rounded-2xl -z-10 group-hover:bg-gray-900/40 transition-all duration-300 transform translate-y-2 group-hover:translate-y-3"></div>
-        </div>
+                <MathCaptcha onVerify={setIsCaptchaValid} />
 
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    disabled={isLoading || !isCaptchaValid}
+                    className="w-full px-6 py-4 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  >
+                    {isLoading ? "Loading..." : "View My Results"}
+                    {!isLoading && <span className="ml-2">→</span>}
+                  </button>
+                </div>
+              </form>
+            </div>
 
-      </div>
-
-      {/* Footer */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm">
-        @ Sri Sairam College of Engineering
+            <div className="mt-10 text-gray-400 text-sm text-center">
+              @ Sri Sairam College of Engineering
+            </div>
+          </div>
+        </PageContainer>
       </div>
     </div>
   );

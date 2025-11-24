@@ -9,11 +9,7 @@ import { MathCaptcha } from '../components/MathCaptcha';
 export default function StudentForm() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    fullName: '',
-    rollNumber: '',
-    dob: '',
-    email: '',
-    phone: ''
+    rollNumber: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
@@ -51,58 +47,14 @@ export default function StudentForm() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <FormInput
-              label="Full Name"
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
+              label="Roll Number"
+              id="rollNumber"
+              name="rollNumber"
+              value={formData.rollNumber}
               onChange={handleChange}
-              placeholder="Enter your full name"
+              placeholder="Enter roll number"
               required
             />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormInput
-                label="Roll Number"
-                id="rollNumber"
-                name="rollNumber"
-                value={formData.rollNumber}
-                onChange={handleChange}
-                placeholder="Enter roll number"
-                required
-              />
-
-              <FormInput
-                label="Date of Birth"
-                type="date"
-                id="dob"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormInput
-                label="Email Address"
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="your.email@example.com"
-              />
-
-              <FormInput
-                label="Phone Number"
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+91 1234567890"
-              />
-            </div>
 
             <MathCaptcha onVerify={setIsCaptchaValid} />
 
