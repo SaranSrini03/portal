@@ -81,7 +81,7 @@ export const AdminLoginForm = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                className={`w-full px-6 py-3 bg-blue-700 text-white font-semibold rounded-xl hover:bg-blue-800 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
                   isLoading ? 'opacity-75 cursor-not-allowed' : ''
                 }`}
               >
