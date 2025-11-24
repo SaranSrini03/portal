@@ -44,25 +44,27 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 font-sans">
-      <HeaderLogos />
-      <div className="fixed top-24 left-0 w-full bg-amber-100 text-amber-900 shadow-sm z-20">
-        <Marquee className="py-2 text-sm font-semibold tracking-wide" scrollamount={15}>
-          Results are out! Please proceed to the portal to view your scores.
-        </Marquee>
+      <div className="sticky top-0 z-30 w-full shadow-sm">
+        <HeaderLogos />
+        <div className="bg-amber-100 text-amber-900 px-4 sm:px-10">
+          <Marquee className="py-2 text-xs sm:text-sm font-semibold tracking-wide" scrollamount={15}>
+            Results are out! Please proceed to the portal to view your scores.
+          </Marquee>
+        </div>
       </div>
 
-      <div className="flex-1 w-full pt-40 pb-10">
-        <PageContainer>
-          <div className="relative z-10 max-w-2xl mx-auto">
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-10">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Student Information</h1>
-                <p className="text-gray-600">Please enter your details to view your results</p>
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <PageContainer className="bg-transparent p-0 sm:p-4 shadow-none">
+          <div className="relative z-10 max-w-2xl w-full mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10">
+              <div className="text-center mb-6 sm:mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Student Information</h1>
+                <p className="text-gray-600 text-sm sm:text-base">Please enter your details to view your results</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <p className="text-sm font-semibold text-gray-700 mb-3">Select Examination</p>
+                  <p className="text-sm font-semibold text-gray-700 mb-3 text-left">Select Examination</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {(["jee", "neet"] as ExamType[]).map((type) => {
                       const isActive = examType === type;
@@ -97,7 +99,7 @@ export default function Home() {
 
                 <MathCaptcha onVerify={setIsCaptchaValid} />
 
-                <div className="pt-4">
+                <div className="pt-2 sm:pt-4">
                   <button
                     type="submit"
                     disabled={isLoading || !isCaptchaValid}
@@ -110,12 +112,12 @@ export default function Home() {
               </form>
             </div>
 
-            <div className="mt-10 text-gray-400 text-sm text-center">
+            <div className="mt-6 sm:mt-10 text-gray-400 text-sm text-center">
               @ Sri Sairam College of Engineering
             </div>
           </div>
         </PageContainer>
-      </div>
+      </main>
     </div>
   );
 }

@@ -75,7 +75,7 @@ export const MathCaptcha: React.FC<MathCaptchaProps> = ({ onVerify }) => {
         <span className="text-red-500">*</span>
       </label>
       
-      <div className="flex items-center gap-3 mb-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-3">
         <div className="flex-1 flex items-center justify-center gap-2 bg-white px-4 py-3 rounded-lg border border-gray-300">
           <span className="text-lg font-bold text-gray-800">{num1}</span>
           <span className="text-gray-600">+</span>
@@ -94,7 +94,7 @@ export const MathCaptcha: React.FC<MathCaptchaProps> = ({ onVerify }) => {
           type="button"
           onClick={handleVerify}
           disabled={isValid}
-          className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 flex items-center gap-1 font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-green-600 disabled:hover:bg-green-600"
+          className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 flex items-center justify-center gap-1 font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-green-600 disabled:hover:bg-green-600 w-full sm:w-auto"
           title="Verify answer"
         >
           {isValid ? (
@@ -116,7 +116,7 @@ export const MathCaptcha: React.FC<MathCaptchaProps> = ({ onVerify }) => {
         <button
           type="button"
           onClick={generateNewCaptcha}
-          className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 flex items-center gap-1"
+          className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 flex items-center justify-center gap-1 w-full sm:w-auto"
           title="Refresh captcha"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
