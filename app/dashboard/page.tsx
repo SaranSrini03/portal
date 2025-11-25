@@ -39,7 +39,7 @@ export default function StudentForm() {
   return (
     <PageContainer>
       <div className="relative z-10 max-w-2xl mx-auto mt-12">
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-10">
+        <div className="bg-white backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-10">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Student Information</h1>
             <p className="text-gray-600">Please enter your details to view your results</p>
@@ -62,7 +62,7 @@ export default function StudentForm() {
               <button
                 type="submit"
                 disabled={isLoading || !isCaptchaValid}
-                className="w-full px-6 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-black hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full px-6 py-4 bg-white text-white font-semibold rounded-xl hover:bg-black hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {isLoading ? 'Loading...' : 'View My Results'}
                 {!isLoading && <span className="ml-2">→</span>}
