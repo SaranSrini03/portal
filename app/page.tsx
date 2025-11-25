@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PageContainer } from "./components/PageContainer";
 import { FormInput } from "./components/FormInput";
 import { MathCaptcha } from "./components/MathCaptcha";
 import { HeaderLogos } from "./components/HeaderLogos";
@@ -62,7 +61,7 @@ export default function Home() {
       <div className="fixed inset-0 z-0 bg-slate-50/60" />
 
       {/* Header */}
-      <div className="relative z-10 sticky top-0 w-full shadow-sm">
+      <div className="relative z-10 w-full shadow-sm">
         <HeaderLogos />
 
         <div className="bg-amber-100 text-amber-900 px-3 sm:px-10 overflow-hidden">
@@ -73,25 +72,27 @@ export default function Home() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 flex-1 w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 mt-20">
-        <div className="flex flex-col items-center justify-center min-h-[70vh]">
-          <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-0 w-full max-w-7xl xl:max-w-[90rem]">
+      <main className="relative flex-1 w-full px-4 sm:px-6 lg:px-10 py-8 sm:py-12 mt-0">
+        <div className="mx-auto flex w-full max-w-5xl lg:max-w-6xl flex-col items-center">
+          <div className="grid w-full items-stretch gap-6 md:gap-0 md:grid-cols-2 lg:grid-cols-[0.9fr,1fr]">
 
             {/* Poster Image */}
-            <div className="hidden lg:block lg:w-1/2 p-0">
-              <Image
-                src={poster}
-                alt="Results Poster"
-                width={1200}
-                height={1800}
-                className="w-full h-auto object-contain rounded-xl sm:rounded-2xl lg:rounded-l-3xl lg:rounded-r-none shadow-lg sm:shadow-xl lg:shadow-2xl"
-                priority
-              />
+            <div className="hidden md:flex items-center justify-center rounded-t-2xl md:rounded-none md:rounded-l-3xl overflow-hidden shadow-2xl">
+              <div className="w-full">
+                <Image
+                  src={poster}
+                  alt="Results Poster"
+                  width={1000}
+                  height={1400}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
             </div>
 
             {/* Check Results Box */}
-            <div className="w-full lg:w-1/2 p-0">
-              <div className="w-full h-full bg-gradient-to-br from-white/60 via-white/40 to-amber-50/30 backdrop-blur-2xl rounded-xl sm:rounded-2xl lg:rounded-r-3xl lg:rounded-l-none shadow-xl sm:shadow-2xl flex flex-col items-center justify-center p-8 sm:p-10 md:p-14 lg:p-16 min-h-[300px] lg:min-h-0 border border-white/70 relative overflow-hidden">
+            <div className="w-full">
+              <div className="mx-auto w-full max-w-xl md:max-w-none h-full bg-gradient-to-br from-white/70 via-white/50 to-amber-50/40 backdrop-blur-2xl rounded-2xl md:rounded-none md:rounded-r-3xl shadow-xl md:shadow-2xl flex flex-col items-center justify-center p-6 sm:p-8 lg:p-10 min-h-[320px] border border-white/60 md:border-l-0 relative overflow-hidden">
                 {/* Decorative circles */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-amber-400/20 rounded-full blur-3xl" />
                 <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-amber-300/20 rounded-full blur-3xl" />
@@ -108,15 +109,15 @@ export default function Home() {
                   />
                 </div>
                 
-                <h2 className="text-gray-900 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center mb-3 sm:mb-4 md:mb-6 leading-tight">
+                <h2 className="text-gray-900 text-balance text-[clamp(1.75rem,3vw,3rem)] font-bold text-center mb-3 sm:mb-5 leading-tight">
                   Ready to see your <span className="text-amber-500">results?</span>
                 </h2>
-                <p className="text-gray-500 text-base sm:text-lg md:text-xl lg:text-2xl text-center mb-8 sm:mb-10 md:mb-12 max-w-md">
+                <p className="text-gray-600 text-sm sm:text-base lg:text-lg text-center mb-6 sm:mb-8 lg:mb-10 max-w-lg">
                   Click below to check your examination scores
                 </p>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="group bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold text-base sm:text-lg md:text-xl lg:text-2xl px-8 sm:px-10 md:px-14 lg:px-16 py-3 sm:py-4 md:py-5 rounded-full shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:scale-[1.03] active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 flex items-center gap-2 sm:gap-3"
+                  className="group bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold text-base sm:text-lg px-8 sm:px-10 lg:px-12 py-3 sm:py-4 rounded-full shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.99] transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 flex items-center gap-2 sm:gap-3"
                 >
                   Check Results
                   <svg className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +132,7 @@ export default function Home() {
 
         {/* Poster Popup on Load */}
         {showPosterPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-[100] px-4 sm:px-6">
+          <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-[999] px-4 sm:px-6">
             <div className="relative max-w-2xl w-full animate-in fade-in zoom-in duration-300">
               {/* Close Button */}
               <button
@@ -159,7 +160,7 @@ export default function Home() {
 
         {/* Center Popup Modal */}
         {showModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md z-[100] px-3 sm:px-4">
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md z-[999] px-3 sm:px-4">
 
             <div className="bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10 w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-2xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
 

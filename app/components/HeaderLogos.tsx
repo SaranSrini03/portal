@@ -17,7 +17,7 @@ export const HeaderLogos = () => {
               alt="Sairam Logo"
               width={100}
               height={100}
-              className="h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 object-contain"
+              className="h-10 xs:h-12 sm:h-14 md:h-16 object-contain"
               priority
             />
 
@@ -31,16 +31,14 @@ export const HeaderLogos = () => {
             </div>
 
           </div>
-
           {/* RIGHT – Chairman Logo */}
           <Image
             src="/Chairman-Logo.png"
             alt="Chairman Logo"
             width={120}
             height={120}
-            className="h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 object-contain"
+            className="h-10 xs:h-12 sm:h-14 md:h-16 object-contain"
           />
-
         </div>
       </div>
     </header>
