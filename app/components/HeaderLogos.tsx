@@ -9,15 +9,15 @@ export const HeaderLogos = () => {
         <div className="flex flex-row items-center justify-between w-full gap-2 sm:gap-4">
 
           {/* LEFT LOGO + TEXT */}
-          <div className="flex flex-row items-center gap-2 sm:gap-4">
+          <div className="flex flex-row items-center gap-2 sm:gap-6">
 
             {/* College Logo */}
             <Image
               src="/sairamlogo.png"
               alt="Sairam Logo"
-              width={100}
-              height={100}
-              className="h-10 xs:h-12 sm:h-14 md:h-16 object-contain"
+              width={120}
+              height={120}
+              className="h-14 xs:h-16 sm:h-16 md:h-18 object-contain"
               priority
             />
 

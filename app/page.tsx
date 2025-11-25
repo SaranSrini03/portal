@@ -51,7 +51,7 @@ export default function Home() {
       <div 
         className="fixed inset-0 z-0"
         style={{
-          backgroundImage: 'url(/college.jpg)',
+          backgroundImage: 'url(/clg.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
