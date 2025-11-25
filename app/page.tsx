@@ -203,7 +203,7 @@ export default function Home() {
                           onClick={() => setExamType(type)}
                           className={`rounded-lg sm:rounded-xl border px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg font-semibold transition-all ${
                             isActive
-                              ? "bg-gray-900 text-white border-gray-900 shadow-md"
+                              ? "bg-blue-600 text-white  shadow-md"
                               : "bg-white text-gray-700 border-gray-200 hover:border-gray-400 active:bg-gray-50"
                           }`}
                         >
