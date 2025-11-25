@@ -20,6 +20,7 @@ export default function Home() {
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const [examType, setExamType] = useState<ExamType>("jee");
   const [showModal, setShowModal] = useState(false);
+  const [showPosterPopup, setShowPosterPopup] = useState(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,7 +66,7 @@ export default function Home() {
         <HeaderLogos />
 
         <div className="bg-amber-100 text-amber-900 px-3 sm:px-10 overflow-hidden">
-          <div className="py-2 text-xs sm:text-sm font-semibold tracking-wide whitespace-nowrap animate-marquee">
+          <div className="py-2 text-xs sm:text-sm font-semibold tracking-tighter animate-marquee">
             Results are out! Please proceed to the portal to view your scores.
           </div>
         </div>
@@ -77,7 +78,7 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-0 w-full max-w-7xl xl:max-w-[90rem]">
 
             {/* Poster Image */}
-            <div className="w-full lg:w-1/2 p-0">
+            <div className="hidden lg:block lg:w-1/2 p-0">
               <Image
                 src={poster}
                 alt="Results Poster"
@@ -122,6 +123,34 @@ export default function Home() {
 
           </div>
         </div>
+
+        {/* Poster Popup on Load */}
+        {showPosterPopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-[100] px-4 sm:px-6">
+            <div className="relative max-w-2xl w-full animate-in fade-in zoom-in duration-300">
+              {/* Close Button */}
+              <button
+                onClick={() => setShowPosterPopup(false)}
+                className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 z-10 bg-white text-gray-700 hover:text-black rounded-full p-2 sm:p-3 shadow-lg hover:scale-110 active:scale-95 transition-all"
+                aria-label="Close poster"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              
+              {/* Poster Image */}
+              <Image
+                src={poster}
+                alt="Results Poster"
+                width={800}
+                height={1200}
+                className="w-full h-auto max-h-[85vh] object-contain rounded-2xl sm:rounded-3xl shadow-2xl"
+                priority
+              />
+            </div>
+          </div>
+        )}
 
         {/* Center Popup Modal */}
         {showModal && (
