@@ -6,12 +6,23 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { PageContainer } from '../../components/PageContainer';
 import { getStudentByRollNumber, StudentResult } from '../../utils/studentApi';
 
+const extractScore = (text: string): number | null => {
+  if (!text) return null;
+  const match = text.match(/(\d{1,3})/);
+  if (!match) return null;
+  const value = Number(match[1]);
+  if (!Number.isFinite(value)) return null;
+  if (value < 0 || value > 100) return null;
+  return value;
+};
+
 function ResultContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [result, setResult] = useState<StudentResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showConfetti, setShowConfetti] = useState(false);
   const examParam = searchParams.get('exam');
   const examType = examParam === 'neet' ? 'neet' : 'jee';
   const examLabel = examType === 'neet' ? 'NEET' : 'JEE';
@@ -39,6 +50,13 @@ function ResultContent() {
         
         if (studentResult) {
           setResult(studentResult);
+          const score = extractScore(studentResult.result);
+          if (score !== null && score > 80) {
+            setShowConfetti(true);
+            setTimeout(() => {
+              setShowConfetti(false);
+            }, 4000);
+          }
         } else {
           setError('No result found for this roll number. Please contact the administrator.');
         }
@@ -54,6 +72,29 @@ function ResultContent() {
 
   return (
     <PageContainer>
+      {showConfetti && (
+        <div className="pointer-events-none fixed inset-0 z-40 overflow-hidden">
+          {Array.from({ length: 80 }).map((_, index) => {
+            const left = Math.random() * 100;
+            const delay = Math.random() * 0.5;
+            const duration = 1.8 + Math.random() * 0.7;
+            const colors = ['#f97316', '#22c55e', '#3b82f6', '#eab308', '#ec4899'];
+            const color = colors[index % colors.length];
+            return (
+              <span
+                key={index}
+                className="confetti-piece"
+                style={{
+                  left: `${left}%`,
+                  animationDelay: `${delay}s`,
+                  animationDuration: `${duration}s`,
+                  backgroundColor: color,
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
       <div className="w-full flex flex-col items-center text-center gap-5 mb-6">
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
           <Image
