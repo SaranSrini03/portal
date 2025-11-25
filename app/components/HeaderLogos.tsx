@@ -6,7 +6,7 @@ export const HeaderLogos = () => {
       <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4">
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6">
           {/* First Logo - Circular Emblem */}
-          <div className="flex-shrink-0">
+          {/* <div className="flex-shrink-0">
             <Image
               src="/circlelogo.jpg"
               alt="Sri Sairam emblem"
@@ -15,7 +15,7 @@ export const HeaderLogos = () => {
               className="h-10 w-10 xs:h-12 xs:w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 object-contain"
               priority
             />
-          </div>
+          </div> */}
 
           {/* Second Logo - College Logo */}
           <div className="flex-shrink-0">
