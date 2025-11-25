@@ -97,19 +97,12 @@ function ResultContent() {
       )}
       <div className="w-full flex flex-col items-center text-center gap-5 mb-6">
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-          <Image
-            src="/circlelogo.jpg"
-            alt="Sri Sairam Emblem"
-            width={90}
-            height={90}
-            className="h-16 w-16 object-contain"
-            priority
-          />
+
           <Image
             src="/sairamlogo.png"
             alt="Sri Sairam College Logo"
-            width={220}
-            height={80}
+            width={280}
+            height={100}
             className="h-16 object-contain"
             priority
           />
@@ -145,6 +138,14 @@ function ResultContent() {
           ) : result ? (
             <div className="space-y-6">
               <div className="text-center">
+                          <Image
+            src="/circlelogo.jpg"
+            alt="Sri Sairam Emblem"
+            width={90}
+            height={90}
+            className="h-16 w-16 object-contain"
+            priority
+          />
                 <p className="text-xs uppercase tracking-[0.25em] text-gray-400">Sri Sairam College of Engineering</p>
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-4 mb-1">
                   NTA Assessment · {examLabel} Result
