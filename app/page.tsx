@@ -46,10 +46,22 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 font-sans">
+    <div className="relative flex min-h-screen flex-col font-sans">
+      {/* Background with college image */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url(/college.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      {/* Overlay for better readability */}
+      <div className="fixed inset-0 z-0 bg-slate-50/80" />
 
       {/* Header */}
-      <div className="sticky top-0 z-30 w-full shadow-sm">
+      <div className="relative z-10 sticky top-0 w-full shadow-sm">
         <HeaderLogos />
 
         <div className="bg-amber-100 text-amber-900 px-3 sm:px-10 overflow-hidden">
@@ -60,7 +72,7 @@ export default function Home() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
+      <main className="relative z-10 flex-1 w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
         <div className="flex flex-col items-center justify-center min-h-[70vh]">
           <div className="flex flex-col items-center gap-3 sm:gap-4 md:gap-6 w-full max-w-4xl">
 
@@ -79,7 +91,7 @@ export default function Home() {
             {/* Check Results Button */}
             <button
               onClick={() => setShowModal(true)}
-              className="bg-black text-white font-bold text-base sm:text-lg md:text-xl px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-full shadow-lg hover:scale-[1.03] active:scale-[0.98] transition-transform focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 w-full max-w-xs sm:max-w-sm"
+              className="bg-amber-500 text-white font-bold text-base sm:text-lg md:text-xl px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-full shadow-lg hover:scale-[1.03] active:scale-[0.98] transition-transform focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 w-full max-w-xs sm:max-w-sm"
             >
               Check Results
             </button>
