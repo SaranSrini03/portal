@@ -97,25 +97,10 @@ function ResultContent() {
         </div>
       )}
       <div className="w-full flex flex-col items-center text-center gap-5 mb-6">
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+    
 
-          <Image
-            src="/sairamlogo.png"
-            alt="Sri Sairam College Logo"
-            width={280}
-            height={100}
-            className="h-16 object-contain"
-            priority
-          />
-          <Image
-            src="/Chairman-Logo.png"
-            alt="Chairman Logo"
-            width={150}
-            height={80}
-            className="h-16 object-contain"
-            priority
-          />
-        </div>
+
+        
       </div>
 
       <div className="h-[100%] w-full flex items-center justify-center px-4 sm:px-10 py-6 overflow-hidden">
