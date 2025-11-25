@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PageContainer } from '../../components/PageContainer';
+import { HeaderLogos } from '../../components/HeaderLogos';
 import { getStudentByRollNumber, StudentResult } from '../../utils/studentApi';
 
 const extractScore = (text: string): number | null => {
@@ -137,17 +138,9 @@ function ResultContent() {
             </div>
           ) : result ? (
             <div className="space-y-6">
-              <div className="text-center">
-                          <Image
-            src="/circlelogo.jpg"
-            alt="Sri Sairam Emblem"
-            width={90}
-            height={90}
-            className="h-16 w-16 object-contain"
-            priority
-          />
-                <p className="text-xs uppercase tracking-[0.25em] text-gray-400">Sri Sairam College of Engineering</p>
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-4 mb-1">
+              <HeaderLogos />
+              <div className="text-center mt-2">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1">
                   NTA Assessment · {examLabel} Result
                 </h1>
                 <p className="text-sm text-gray-500">
