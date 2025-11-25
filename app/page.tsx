@@ -96,11 +96,16 @@ export default function Home() {
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-amber-400/20 rounded-full blur-3xl" />
                 <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-amber-300/20 rounded-full blur-3xl" />
                 
-                {/* Icon */}
-                <div className="mb-6 sm:mb-8 p-4 sm:p-5 bg-amber-500/10 rounded-full">
-                  <svg className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                {/* Logo Icon */}
+                <div className="mb-6 sm:mb-8 p-2 sm:p-3 bg-amber-500/10 rounded-full flex items-center justify-center">
+                  <Image
+                    src="/circlelogo.jpg"
+                    alt="Sri Sairam emblem"
+                    width={100}
+                    height={100}
+                    className="h-32 w-32 sm:h-32 sm:w-32  md:h-20 md:w-20 rounded-full object-cover shadow-md"
+                    priority
+                  />
                 </div>
                 
                 <h2 className="text-gray-900 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center mb-3 sm:mb-4 md:mb-6 leading-tight">
