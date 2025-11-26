@@ -156,13 +156,13 @@ function ResultContent() {
                   </table>
                 </div>
 
-                <div className="rounded-lg bg-white shadow-sm border border-gray-200 overflow-hidden flex items-center justify-center min-h-[560px] print:min-h-[28rem] print:shadow-none">
+                <div className="rounded-lg bg-white shadow-sm border border-gray-200 overflow-hidden flex items-center justify-center min-h-[180px] sm:min-h-[300px] lg:min-h-[420px] print:min-h-[24rem] print:shadow-none">
                   <Image
                     src={poster}
                     alt="Result announcement poster"
                     width={800}
                     height={1000}
-                    className="w-full h-full object-cover print:h-auto print:max-h-[38rem] print:object-contain"
+                    className="w-full h-full object-cover print:h-auto print:max-h-[30rem] print:object-contain"
                     priority
                   />
                 </div>
