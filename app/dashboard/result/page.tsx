@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { PageContainer } from '../../components/PageContainer';
 import { HeaderLogos } from '../../components/HeaderLogos';
 import { getStudentByRollNumber, StudentResult } from '../../utils/studentApi';
+import poster from '@/public/admission.png';
 
 const extractScore = (text: string): number | null => {
   if (!text) return null;
@@ -74,7 +75,7 @@ function ResultContent() {
   return (
     <PageContainer>
       {showConfetti && (
-        <div className="pointer-events-none fixed inset-0 z-40 overflow-hidden">
+        <div className="pointer-events-none fixed inset-0 z-40 overflow-hidden print:hidden">
           {Array.from({ length: 80 }).map((_, index) => {
             const left = Math.random() * 100;
             const delay = Math.random() * 0.5;
@@ -103,8 +104,8 @@ function ResultContent() {
         
       </div>
 
-      <div className="h-[100%] w-full flex items-center justify-center px-4 sm:px-10 py-6 overflow-hidden">
-        <div className="w-full max-w-6xl">
+      <div className="w-full flex items-center justify-center px-3 sm:px-6 lg:px-8 py-4 print:px-0 print:py-0">
+        <div className="w-full max-w-4xl print:max-w-[700px]">
           {isLoading ? (
             <div className="flex items-center justify-center py-16">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
@@ -122,39 +123,52 @@ function ResultContent() {
               </button>
             </div>
           ) : result ? (
-            <div className="space-y-6">
+            <div className="space-y-3 print:space-y-2">
               <HeaderLogos />
-              <div className="text-center mt-2">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1">
+              <div className="text-center">
+                <h1 className="text-2xl sm:text-3xl print:text-xl font-bold text-gray-900 mb-1">
                   NTA Assessment · {examLabel} Result
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm print:text-[11px] text-gray-500">
                   Official {examLabel} Result Sheet · Academic Year {new Date(result.createdAt).getFullYear()}
                 </p>
               </div>
 
-              <div className="border border-gray-300 rounded-lg bg-white shadow-sm">
-                <table className="w-full text-left text-base text-gray-800 table-fixed">
-                  <thead className="bg-gray-100 text-gray-600 uppercase text-xs tracking-wide">
-                    <tr>
-                      <th className="px-6 py-4 border-b border-gray-200">Roll Number</th>
-                      <th className="px-6 py-4 border-b border-gray-200">Result</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="px-6 py-6 border-b border-gray-100 font-semibold text-lg break-words">
-                        {result.rollNumber}
-                      </td>
-                      <td className="px-6 py-6 border-b border-gray-100 text-base whitespace-pre-wrap break-words">
-                        {result.result}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div className="grid gap-4 md:grid-cols-[1fr,1.2fr] items-stretch print:grid-cols-1 print:gap-2">
+                <div className="border border-gray-300 rounded-lg bg-white shadow-sm">
+                  <table className="w-full text-left text-sm sm:text-base print:text-xs text-gray-800 table-fixed">
+                    <thead className="bg-gray-100 text-gray-600 uppercase text-[10px] sm:text-xs print:text-[10px] tracking-wide">
+                      <tr>
+                        <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Roll Number</th>
+                        <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Result</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="px-4 sm:px-6 py-4 sm:py-6 print:py-3 border-b border-gray-100 font-semibold text-base print:text-sm break-words">
+                          {result.rollNumber}
+                        </td>
+                        <td className="px-4 sm:px-6 py-4 sm:py-6 print:py-3 border-b border-gray-100 text-sm sm:text-base print:text-sm whitespace-pre-wrap break-words">
+                          {result.result}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="rounded-lg bg-white shadow-sm border border-gray-200 overflow-hidden flex items-center justify-center min-h-[560px] print:min-h-[28rem] print:shadow-none">
+                  <Image
+                    src={poster}
+                    alt="Result announcement poster"
+                    width={800}
+                    height={1000}
+                    className="w-full h-full object-cover print:h-auto print:max-h-[38rem] print:object-contain"
+                    priority
+                  />
+                </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 print:hidden">
                 <div className="text-xs sm:text-sm text-gray-500">
                   Published on:{' '}
                   <span className="font-medium text-gray-700">{new Date(result.createdAt).toLocaleString()}</span>
