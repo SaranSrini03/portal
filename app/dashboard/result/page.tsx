@@ -41,7 +41,7 @@ function ResultContent() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push('/');
-    }, 10000);
+    }, 20000);
     return () => clearTimeout(timer);
   }, [router]);
 
@@ -74,7 +74,7 @@ function ResultContent() {
         if (studentResult) {
           setResult(studentResult);
           const score = extractScore(studentResult.result);
-          if (score !== null && score > 80) {
+          if (score !== null && score > 5) {
             setShowConfetti(true);
             setTimeout(() => {
               setShowConfetti(false);
