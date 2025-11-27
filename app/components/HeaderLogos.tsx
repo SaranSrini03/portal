@@ -33,10 +33,10 @@ export const HeaderLogos = () => {
           </div>
           {/* RIGHT – Chairman Logo */}
           <Image
-            src="/Chairman-Logo.png"
+            src="/LOGO1.png"
             alt="Chairman Logo"
-            width={120}
-            height={120}
+            width={160}
+            height={160}
             className="h-10 xs:h-12 sm:h-14 md:h-16 object-contain"
           />
         </div>

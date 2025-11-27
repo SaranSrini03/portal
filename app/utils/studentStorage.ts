@@ -1,5 +1,6 @@
 export interface StudentResult {
   id: string;
+  name: string;
   rollNumber: string;
   result: string;
   createdAt: string;
@@ -13,10 +14,11 @@ export const getStudents = (): StudentResult[] => {
   return stored ? JSON.parse(stored) : [];
 };
 
-export const addStudent = (rollNumber: string, result: string): StudentResult => {
+export const addStudent = (name: string, rollNumber: string, result: string): StudentResult => {
   const students = getStudents();
   const newStudent: StudentResult = {
     id: Date.now().toString(),
+    name: name.trim(),
     rollNumber: rollNumber.trim(),
     result: result.trim(),
     createdAt: new Date().toISOString(),
@@ -26,13 +28,14 @@ export const addStudent = (rollNumber: string, result: string): StudentResult =>
   return newStudent;
 };
 
-export const updateStudent = (id: string, rollNumber: string, result: string): StudentResult | null => {
+export const updateStudent = (id: string, name: string, rollNumber: string, result: string): StudentResult | null => {
   const students = getStudents();
   const index = students.findIndex(s => s.id === id);
   if (index === -1) return null;
   
   students[index] = {
     ...students[index],
+    name: name.trim(),
     rollNumber: rollNumber.trim(),
     result: result.trim(),
   };
@@ -58,6 +61,7 @@ export const searchStudents = (query: string): StudentResult[] => {
   const lowerQuery = query.toLowerCase().trim();
   if (!lowerQuery) return students;
   return students.filter(s => 
+    s.name.toLowerCase().includes(lowerQuery) ||
     s.rollNumber.toLowerCase().includes(lowerQuery) ||
     s.result.toLowerCase().includes(lowerQuery)
   );

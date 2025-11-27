@@ -26,6 +26,7 @@ export default function AdminHomepage() {
   const csvInputRef = useRef<HTMLInputElement>(null);
   
   // Form state
+  const [name, setName] = useState('');
   const [rollNumber, setRollNumber] = useState('');
   const [result, setResult] = useState('');
 
@@ -62,13 +63,14 @@ export default function AdminHomepage() {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rollNumber.trim() || !result.trim()) return;
+    if (!name.trim() || !rollNumber.trim() || !result.trim()) return;
     
     setIsLoading(true);
     setError('');
     setSuccess('');
     try {
-      await addStudent(rollNumber, result);
+      await addStudent(name, rollNumber, result);
+      setName('');
       setRollNumber('');
       setResult('');
       setSuccess('Student added successfully!');
@@ -152,29 +154,33 @@ export default function AdminHomepage() {
         value.toLowerCase().replace(/[^a-z0-9]/g, '')
       ) || [];
 
+      const nameIndex = headers.findIndex(header =>
+        header === 'studentname' || header === 'name' || header === 'fullname'
+      );
       const usnIndex = headers.findIndex(header =>
         header === 'usn' || header === 'rollnumber' || header === 'rollno'
       );
       const resultIndex = headers.findIndex(header => header === 'result');
 
-      if (usnIndex === -1 || resultIndex === -1) {
-        throw new Error('CSV must include "USN" (or Roll Number) and "Result" columns.');
+      if (nameIndex === -1 || usnIndex === -1 || resultIndex === -1) {
+        throw new Error('CSV must include "Student Name", "USN"/Roll Number and "Result" columns.');
       }
 
       let imported = 0;
       let skipped = 0;
 
       for (const row of rows) {
+        const studentName = row[nameIndex]?.trim();
         const roll = row[usnIndex]?.trim();
         const resultValue = row[resultIndex]?.trim();
 
-        if (!roll || !resultValue) {
+        if (!studentName || !roll || !resultValue) {
           skipped++;
           continue;
         }
 
         try {
-          await addStudent(roll, resultValue);
+          await addStudent(studentName, roll, resultValue);
           imported++;
         } catch (err) {
           console.error('CSV import error:', err);
@@ -229,14 +235,15 @@ export default function AdminHomepage() {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingStudent || !rollNumber.trim() || !result.trim()) return;
+    if (!editingStudent || !name.trim() || !rollNumber.trim() || !result.trim()) return;
     
     setIsLoading(true);
     setError('');
     setSuccess('');
     try {
-      await updateStudent(editingStudent.id, rollNumber, result);
+      await updateStudent(editingStudent.id, name, rollNumber, result);
       setEditingStudent(null);
+      setName('');
       setRollNumber('');
       setResult('');
       setSuccess('Student updated successfully!');
@@ -252,6 +259,7 @@ export default function AdminHomepage() {
 
   const handleEdit = (student: StudentResult) => {
     setEditingStudent(student);
+    setName(student.name);
     setRollNumber(student.rollNumber);
     setResult(student.result);
     setActiveSection('add');
@@ -277,6 +285,7 @@ export default function AdminHomepage() {
 
   const cancelEdit = () => {
     setEditingStudent(null);
+    setName('');
     setRollNumber('');
     setResult('');
   };
@@ -448,6 +457,24 @@ export default function AdminHomepage() {
               
               <form onSubmit={editingStudent ? handleUpdate : handleAdd} className="max-w-2xl space-y-6">
                 <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
+                  <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Student Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm hover:shadow-md"
+                    placeholder="Enter full name"
+                    required
+                  />
+                </div>
+
+                <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                   <label htmlFor="rollNumber" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -554,7 +581,7 @@ export default function AdminHomepage() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm hover:shadow-md"
-                        placeholder="Search by roll number or result..."
+                        placeholder="Search by name, roll number or result..."
                       />
                     </div>
                     <button
@@ -601,10 +628,15 @@ export default function AdminHomepage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-3">
                             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white font-bold text-sm">{student.rollNumber.charAt(0).toUpperCase()}</span>
+                              <span className="text-white font-bold text-sm">
+                                {(student.name || student.rollNumber || '?').charAt(0).toUpperCase()}
+                              </span>
                             </div>
                             <div className="min-w-0">
-                              <div className="font-bold text-gray-900 text-lg mb-1 break-words">
+                              <div className="font-bold text-gray-900 text-lg mb-0.5 break-words">
+                                {student.name || 'Name unavailable'}
+                              </div>
+                              <div className="text-sm text-gray-600 mb-1 break-words">
                                 Roll Number: <span className="text-blue-600">{student.rollNumber}</span>
                               </div>
                               <div className="text-xs text-gray-500 flex items-center gap-1">

@@ -160,12 +160,16 @@ function ResultContent() {
                   <table className="w-full text-left text-sm sm:text-base print:text-xs text-gray-800 table-fixed">
                     <thead className="bg-gray-100 text-gray-600 uppercase text-[10px] sm:text-xs print:text-[10px] tracking-wide">
                       <tr>
+                        <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Name</th>
                         <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Roll Number</th>
                         <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Result</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
+                        <td className="px-4 sm:px-6 py-4 sm:py-6 print:py-3 border-b border-gray-100 font-semibold text-base print:text-sm break-words">
+                          {result.name || 'Name unavailable'}
+                        </td>
                         <td className="px-4 sm:px-6 py-4 sm:py-6 print:py-3 border-b border-gray-100 font-semibold text-base print:text-sm break-words">
                           {result.rollNumber}
                         </td>

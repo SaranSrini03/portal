@@ -1,5 +1,6 @@
 export interface StudentResult {
   id: string;
+  name: string;
   rollNumber: string;
   result: string;
   createdAt: string;
@@ -37,13 +38,13 @@ export async function searchStudents(query: string): Promise<StudentResult[]> {
   return response.json();
 }
 
-export async function addStudent(rollNumber: string, result: string): Promise<StudentResult> {
+export async function addStudent(name: string, rollNumber: string, result: string): Promise<StudentResult> {
   const response = await fetch(API_BASE, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ rollNumber, result }),
+    body: JSON.stringify({ name, rollNumber, result }),
   });
   
   if (!response.ok) {
@@ -54,13 +55,13 @@ export async function addStudent(rollNumber: string, result: string): Promise<St
   return response.json();
 }
 
-export async function updateStudent(id: string, rollNumber: string, result: string): Promise<StudentResult> {
+export async function updateStudent(id: string, name: string, rollNumber: string, result: string): Promise<StudentResult> {
   const response = await fetch(`${API_BASE}/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ rollNumber, result }),
+    body: JSON.stringify({ name, rollNumber, result }),
   });
   
   if (!response.ok) {

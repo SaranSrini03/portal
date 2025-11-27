@@ -4,6 +4,7 @@ import { getDb } from '../../../lib/mongodb';
 export interface StudentResult {
   _id?: string;
   id?: string;
+  name: string;
   rollNumber: string;
   result: string;
   createdAt: string;
@@ -29,6 +30,7 @@ export async function GET(request: NextRequest) {
       
       return NextResponse.json({
         id: student._id?.toString(),
+        name: student.name ?? '',
         rollNumber: student.rollNumber,
         result: student.result,
         createdAt: student.createdAt,
@@ -38,6 +40,7 @@ export async function GET(request: NextRequest) {
     if (query) {
       const students = await collection.find({
         $or: [
+          { name: { $regex: query, $options: 'i' } },
           { rollNumber: { $regex: query, $options: 'i' } },
           { result: { $regex: query, $options: 'i' } },
         ],
@@ -46,6 +49,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         students.map(s => ({
           id: s._id?.toString(),
+          name: s.name ?? '',
           rollNumber: s.rollNumber,
           result: s.result,
           createdAt: s.createdAt,
@@ -58,6 +62,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       students.map(s => ({
         id: s._id?.toString(),
+        name: s.name ?? '',
         rollNumber: s.rollNumber,
         result: s.result,
         createdAt: s.createdAt,
@@ -78,11 +83,11 @@ export async function POST(request: NextRequest) {
     const collection = db.collection<StudentResult>('students');
     
     const body = await request.json();
-    const { rollNumber, result } = body;
+    const { name, rollNumber, result } = body;
 
-    if (!rollNumber || !result) {
+    if (!name || !rollNumber || !result) {
       return NextResponse.json(
-        { error: 'Roll number and result are required' },
+        { error: 'Name, roll number and result are required' },
         { status: 400 }
       );
     }
@@ -99,6 +104,7 @@ export async function POST(request: NextRequest) {
     }
 
     const newStudent = {
+      name: name.trim(),
       rollNumber: rollNumber.trim(),
       result: result.trim(),
       createdAt: new Date().toISOString(),

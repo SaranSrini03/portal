@@ -11,11 +11,11 @@ export async function PUT(
     const collection = db.collection('students');
     
     const body = await request.json();
-    const { rollNumber, result } = body;
+    const { name, rollNumber, result } = body;
 
-    if (!rollNumber || !result) {
+    if (!name || !rollNumber || !result) {
       return NextResponse.json(
-        { error: 'Roll number and result are required' },
+        { error: 'Name, roll number and result are required' },
         { status: 400 }
       );
     }
@@ -33,6 +33,7 @@ export async function PUT(
       { _id: new ObjectId(id) },
       {
         $set: {
+          name: name.trim(),
           rollNumber: rollNumber.trim(),
           result: result.trim(),
         },
@@ -50,6 +51,7 @@ export async function PUT(
 
     return NextResponse.json({
       id: updatedStudent!._id.toString(),
+      name: updatedStudent!.name ?? '',
       rollNumber: updatedStudent!.rollNumber,
       result: updatedStudent!.result,
       createdAt: updatedStudent!.createdAt,
