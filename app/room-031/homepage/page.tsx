@@ -22,6 +22,10 @@ export default function AdminHomepage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [importReport, setImportReport] = useState({
+    duplicates: [] as string[],
+    existing: [] as string[],
+  });
   const [isImporting, setIsImporting] = useState(false);
   const csvInputRef = useRef<HTMLInputElement>(null);
   
@@ -68,6 +72,7 @@ export default function AdminHomepage() {
     setIsLoading(true);
     setError('');
     setSuccess('');
+    setImportReport({ duplicates: [], existing: [] });
     try {
       await addStudent(name, rollNumber, result);
       setName('');
@@ -168,6 +173,9 @@ export default function AdminHomepage() {
 
       let imported = 0;
       let skipped = 0;
+      const seenRolls = new Set<string>();
+      const duplicateRolls: string[] = [];
+      const existingRolls: string[] = [];
 
       for (const row of rows) {
         const studentName = row[nameIndex]?.trim();
@@ -179,11 +187,24 @@ export default function AdminHomepage() {
           continue;
         }
 
+        const normalizedRoll = roll.toLowerCase();
+        if (seenRolls.has(normalizedRoll)) {
+          duplicateRolls.push(roll);
+          skipped++;
+          continue;
+        }
+        seenRolls.add(normalizedRoll);
+
         try {
           await addStudent(studentName, roll, resultValue);
           imported++;
         } catch (err) {
-          console.error('CSV import error:', err);
+          const message = err instanceof Error ? err.message : 'Unknown error';
+          if (message.toLowerCase().includes('already exists')) {
+            existingRolls.push(roll);
+          } else {
+            console.error('CSV import error:', err);
+          }
           skipped++;
         }
       }
@@ -191,6 +212,11 @@ export default function AdminHomepage() {
       if (imported === 0) {
         throw new Error('No valid rows were imported. Please verify the CSV content.');
       }
+
+      setImportReport({
+        duplicates: duplicateRolls,
+        existing: existingRolls,
+      });
 
       setSuccess(
         `Imported ${imported} ${imported === 1 ? 'student' : 'students'}${skipped ? ` (${skipped} skipped)` : ''}.`
@@ -388,6 +414,22 @@ export default function AdminHomepage() {
                 </svg>
                 <p className="text-green-800 text-sm font-medium">{success}</p>
               </div>
+              {(importReport.duplicates.length > 0 || importReport.existing.length > 0) && (
+                <div className="mt-3 text-xs text-green-800 space-y-1">
+                  {importReport.duplicates.length > 0 && (
+                    <p>
+                      Removed duplicate USNs from file ({importReport.duplicates.length}):{' '}
+                      <span className="font-semibold">{importReport.duplicates.join(', ')}</span>
+                    </p>
+                  )}
+                  {importReport.existing.length > 0 && (
+                    <p>
+                      Skipped already existing USNs ({importReport.existing.length}):{' '}
+                      <span className="font-semibold">{importReport.existing.join(', ')}</span>
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
           
