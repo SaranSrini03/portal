@@ -162,7 +162,7 @@ function ResultContent() {
                       <tr>
                         <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Name</th>
                         <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Roll Number</th>
-                        <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Result</th>
+                        <th className="px-4 sm:px-6 py-3 sm:py-4 print:py-2 border-b border-gray-200">Score</th>
                       </tr>
                     </thead>
                     <tbody>
