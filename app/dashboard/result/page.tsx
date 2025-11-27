@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { PageContainer } from '../../components/PageContainer';
 import { HeaderLogos } from '../../components/HeaderLogos';
 import { getStudentByRollNumber, StudentResult } from '../../utils/studentApi';
-import poster from '@/public/admission.png';
+import poster from '@/public/POSTER2.png';
 
 const extractScore = (text: string): number | null => {
   if (!text) return null;
@@ -25,6 +25,7 @@ function ResultContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
+  const [redirectCountdown, setRedirectCountdown] = useState(10);
   const examParam = searchParams.get('exam');
   const examType = examParam === 'neet' ? 'neet' : 'jee';
   const examLabel = examType === 'neet' ? 'NEET' : 'JEE';
@@ -36,6 +37,26 @@ function ResultContent() {
       document.title = previousTitle;
     };
   }, [examLabel]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push('/');
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [router]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRedirectCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -172,6 +193,10 @@ function ResultContent() {
                 <div className="text-xs sm:text-sm text-gray-500">
                   Published on:{' '}
                   <span className="font-medium text-gray-700">{new Date(result.createdAt).toLocaleString()}</span>
+                </div>
+                <div className="text-xs sm:text-sm text-gray-500">
+                  Redirecting to dashboard in{' '}
+                  <span className="font-semibold text-gray-900">{redirectCountdown}s</span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto print:hidden">
                   <button
