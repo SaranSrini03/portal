@@ -148,7 +148,7 @@ function ResultContent() {
               <HeaderLogos />
               <div className="text-center">
                 <h1 className="text-2xl sm:text-3xl print:text-xl font-bold text-gray-900 mb-1">
-                  NTA Assessment · {examLabel} Result
+                  NTA Assessment · Result
                 </h1>
                 <p className="text-xs sm:text-sm print:text-[11px] text-gray-500">
                   Official {examLabel} Result Sheet · Academic Year {new Date(result.createdAt).getFullYear()}
